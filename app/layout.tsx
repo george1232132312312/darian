@@ -1,33 +1,38 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
+import { CONTACT, SITE_URL } from "./site-config";
 import "./globals.css";
 
 const poppins = Poppins({
   subsets: ["latin", "latin-ext"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600"],
   variable: "--font-poppins",
   display: "swap",
 });
 
+const IN_CITY = CONTACT.city ? ` din ${CONTACT.city}` : "";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://fiorisweets.ro"),
-  title: "fíori. — cofetărie artizanală | torturi, prăjituri & dulciuri",
-  description:
-    "fíori. este un atelier artizanal de dulciuri: torturi personalizate, prăjituri, cookies, marshmallows și candy bar pentru evenimente. Făcute cu drag, în serii mici.",
+  metadataBase: new URL(SITE_URL),
+  title: "fíori. — cofetărie artizanală | prăjituri, cookies & dulciuri",
+  description: `fíori. (fiori) este un atelier artizanal de dulciuri${IN_CITY}: prăjituri, eclere, cookies și marshmallows. Făcute cu drag, în serii mici.`,
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "fíori. — cofetărie artizanală",
     description:
-      "Torturi personalizate, prăjituri, cookies și candy bar pentru evenimente. Făcute cu drag, în serii mici.",
-    url: "https://fiorisweets.ro",
+      "Prăjituri, cookies și marshmallows făcute cu drag, în serii mici.",
+    url: "/",
     siteName: "fíori.",
     locale: "ro_RO",
     type: "website",
     images: [
       {
-        url: "/images/hero-box.jpg",
-        width: 1600,
-        height: 893,
-        alt: "Cutie fíori. cu cookies și marshmallows",
+        url: "/images/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Eclere și choux-uri fíori.",
       },
     ],
   },

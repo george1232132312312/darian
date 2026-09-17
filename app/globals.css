@@ -13,13 +13,26 @@
   --font-sans: var(--font-poppins);
 }
 
+:root {
+  color-scheme: only light;
+}
+
+/* Jumătățile benzii sunt separate de gap-8 (2rem), deci o buclă = -50% - 1rem. */
 @keyframes marquee {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translateX(calc(-50% - 1rem));
   }
+}
+
+.marquee-track {
+  animation: marquee 35s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
 }
 
 .pattern-dashes {
@@ -27,6 +40,24 @@
   background-size: 32px 32px;
 }
 
+/* Header-ul sticky are ~114px pe mobil (cu meniul) și 64px pe desktop. */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 8rem;
+}
+
+@media (min-width: 48rem) {
+  html {
+    scroll-padding-top: 5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .marquee-track {
+    animation: none;
+  }
 }

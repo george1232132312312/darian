@@ -1,6 +1,8 @@
 # fíori. — fiorisweets.ro
 
-Site de prezentare pentru **fíori.**, cofetărie artizanală (torturi, prăjituri, cookies, marshmallows, candy bar).
+Site de prezentare pentru **fíori.**, cofetărie artizanală (prăjituri, cookies, marshmallows).
+
+Datele de contact (email, telefon, WhatsApp, Instagram, oraș) se modifică într-un singur loc: `app/site-config.ts`.
 
 - **Stack:** Next.js (App Router) + Tailwind CSS v4, deploy pe Vercel
 - **Brand:** verde forest `#33523f` + peach `#f3c9ab` / blush `#f9ddc8`, font Poppins, wordmark lowercase `fíori.`
