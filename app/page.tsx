@@ -5,7 +5,36 @@ const NAV = [
   { href: "#produse", label: "Produse" },
   { href: "#galerie", label: "Galerie" },
   { href: "#despre", label: "Despre" },
+  { href: "#meniu", label: "Meniu" },
   { href: "#contact", label: "Contact" },
+];
+
+const MENU = [
+  {
+    group: "Cookies",
+    items: [
+      { name: "Red Velvet", detail: "cu zmeură și nucă de cocos" },
+      { name: "Lumiere", detail: "lămâie cu mac" },
+      { name: "Mocha", detail: "cu alune de pădure și cafea" },
+    ],
+  },
+  {
+    group: "Marshmallows & brownies",
+    items: [
+      { name: "Marshmallows", detail: "cu nucă de cocos" },
+      { name: "Brownies", detail: "cu ciocolată și nuci" },
+      { name: "Brownies", detail: "cu zmeură" },
+    ],
+  },
+  {
+    group: "Fructe Prăjituri",
+    items: [
+      { name: "Măr Verde", detail: "" },
+      { name: "Bob de Cafea", detail: "" },
+      { name: "Mango", detail: "" },
+      { name: "Fistic", detail: "" },
+    ],
+  },
 ];
 
 const GALLERY = [
@@ -16,6 +45,26 @@ const GALLERY = [
   {
     img: "/images/lava-cake.jpg",
     caption: "Lava cake cu ciocolată",
+  },
+  {
+    img: "/images/fructe-marmura.jpg",
+    caption: "Prăjituri în formă de fruct",
+  },
+  {
+    img: "/images/fructe-tava.jpg",
+    caption: "Pere, afine și mere, gata de servit",
+  },
+  {
+    img: "/images/cookies-bezea.jpg",
+    caption: "Cookies cu bezea și cremă de citrice",
+  },
+  {
+    img: "/images/cookies-creme.jpg",
+    caption: "Cookies cu creme, fructe și caramel",
+  },
+  {
+    img: "/images/cookies-tava.jpg",
+    caption: "Rânduri de cookies, gata de livrat",
   },
 ];
 
@@ -39,30 +88,23 @@ const VIDEOS = [
 
 const PRODUCTS = [
   {
-    img: "/images/pastry.jpg",
-    title: "Prăjituri & pastry",
-    text: "Eclere, choux-uri, tarte și prăjituri de casă, lucrate în serii mici, cu unt adevărat și multă răbdare.",
-  },
-  {
-    img: "/images/cookies.jpg",
+    img: "/images/cookies-topping.jpg",
     title: "Cookies",
-    text: "Cookies cu bucăți generoase de ciocolată — crocanți la margine, moi la mijloc.",
+    text: "Cookies mari, cu creme și topping-uri diferite — crocante la margine, moi la mijloc.",
   },
   {
-    img: "/images/marshmallow.jpg",
-    title: "Marshmallows & sweets",
-    text: "Marshmallows caramelizate, bezele pufoase și alte dulciuri mărunte, pentru orice poftă.",
+    img: "/images/marshmallows-brownies.jpg",
+    title: "Marshmallows & brownies",
+    text: "Brownies cu ciocolată, marshmallows caramelizate și bezele pufoase — dulciuri mărunte, pentru orice poftă.",
+  },
+  {
+    img: "/images/prajituri-fructe.jpg",
+    title: "Fructe Prăjituri",
+    text: "Prăjituri cu mousse, în formă de fruct — pară, piersică sau afină, fiecare cu miezul ei de fruct.",
   },
 ];
 
-const MARQUEE_ITEMS = [
-  "cookies",
-  "eclere",
-  "marshmallows",
-  "pastry",
-  "bezele",
-  "prăjituri",
-];
+const MARQUEE_ITEMS = ["cookies", "pastry", "bezele", "marshmallows"];
 
 const STEPS = [
   {
@@ -111,7 +153,7 @@ const JSON_LD = {
   name: "fíori.",
   alternateName: ["fiori", "fiori sweets"],
   description:
-    "Cofetărie artizanală: prăjituri, eclere, cookies și marshmallows, făcute în serii mici.",
+    "Cofetărie artizanală: cookies, marshmallows, bezele și prăjituri, făcute în serii mici.",
   url: SITE_URL,
   image: `${SITE_URL}/images/og.jpg`,
   email: CONTACT.email,
@@ -259,7 +301,7 @@ export default function Home() {
               ce pregătim
             </p>
             <h2 className="mt-3 text-3xl font-semibold text-fern-deep sm:text-4xl">
-              Dulciuri făcute ca acasă
+              Cookies, marshmallows, bezele, prăjituri
             </h2>
             <p className="mt-4 max-w-2xl font-light leading-relaxed text-cocoa/80">
               Fiecare produs iese din atelier proaspăt, din ingrediente atent
@@ -292,10 +334,6 @@ export default function Home() {
                 </article>
               ))}
             </div>
-            <p className="mt-8 text-xs font-light text-cocoa/70">
-              Fotografiile produselor au rol de prezentare — fiecare comandă se
-              pregătește proaspăt, special pentru tine.
-            </p>
           </div>
         </section>
 
@@ -310,9 +348,10 @@ export default function Home() {
             </h2>
             <p className="mt-4 max-w-2xl font-light leading-relaxed text-blush/85">
               Câteva dintre dulciurile noastre — de la „mărul verde” cu inimă
-              de mere până la lava cake-ul cu ciocolată.
+              de mere până la cookies-urile cu creme și prăjiturile în formă de
+              fruct.
             </p>
-            <div className="mt-12 grid max-w-4xl gap-6 sm:grid-cols-2">
+            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {GALLERY.map((g) => (
                 <figure key={g.img} className="group">
                   <div className="relative aspect-square overflow-hidden rounded-3xl shadow-lg">
@@ -320,7 +359,7 @@ export default function Home() {
                       src={g.img}
                       alt={g.caption}
                       fill
-                      sizes="(min-width: 896px) 436px, (min-width: 640px) 50vw, 100vw"
+                      sizes="(min-width: 1152px) 352px, (min-width: 640px) 50vw, 100vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
@@ -424,6 +463,51 @@ export default function Home() {
               deci pot apărea urme și în produsele care nu îi conțin ca
               ingredient. Spune-ne la comandă dacă ai o alergie — îți confirmăm
               în scris ce conține produsul tău.
+            </p>
+          </div>
+        </section>
+
+        {/* Meniu */}
+        <section id="meniu" className="bg-blush py-20">
+          <div className="mx-auto w-full max-w-5xl px-6">
+            <p className="text-xs font-medium uppercase tracking-[0.4em] text-fern">
+              meniu
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold text-fern-deep sm:text-4xl">
+              Ce găsești la noi
+            </h2>
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {MENU.map((g) => (
+                <div key={g.group} className="rounded-3xl bg-cream/80 p-6">
+                  <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-fern">
+                    {g.group}
+                  </h3>
+                  <ul className="mt-4 space-y-4">
+                    {g.items.map((item) => (
+                      <li key={`${item.name} ${item.detail}`}>
+                        <p className="text-sm font-semibold text-fern-deep">
+                          {item.name}
+                        </p>
+                        {item.detail && (
+                          <p className="mt-1 text-xs font-light leading-relaxed text-cocoa/70">
+                            {item.detail}
+                          </p>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <p className="mt-8 font-light leading-relaxed text-cocoa/80">
+              Pentru produse personalizate,{" "}
+              <a
+                href={MAIL_HREF}
+                className="font-medium text-fern underline underline-offset-4 transition-colors hover:text-fern-deep"
+              >
+                scrie-ne pe email
+              </a>
+              .
             </p>
           </div>
         </section>

@@ -2,7 +2,7 @@ export const SITE_URL = "https://fiorisweets.ro";
 
 // Câmpurile lăsate goale ("") nu apar pe site.
 export const CONTACT = {
-  email: "fiorisweets@gmail.com",
+  email: "fiorisweets1@gmail.com",
   // ex. "0712 345 678"
   phone: "",
   // doar cifre, cu prefixul țării, fără + — ex. "40712345678"
