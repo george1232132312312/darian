@@ -14,15 +14,15 @@ const IN_CITY = CONTACT.city ? ` din ${CONTACT.city}` : "";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "fíori. — cofetărie artizanală | cookies, marshmallows & prăjituri",
-  description: `fíori. (fiori) este un atelier artizanal de dulciuri${IN_CITY}: cookies, marshmallows, bezele și prăjituri. Făcute cu drag, în serii mici.`,
+  title: "fíori. — cofetărie artizanală | cookies, brownies & marshmallows",
+  description: `fíori. (fiori) este un atelier artizanal de dulciuri${IN_CITY}: cookies, brownies și marshmallows, în boxuri de 4, 6 sau 12. Făcute cu drag, în serii mici.`,
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "fíori. — cofetărie artizanală",
     description:
-      "Cookies, marshmallows, bezele și prăjituri făcute cu drag, în serii mici.",
+      "Cookies, brownies și marshmallows făcute cu drag, în serii mici.",
     url: "/",
     siteName: "fíori.",
     locale: "ro_RO",

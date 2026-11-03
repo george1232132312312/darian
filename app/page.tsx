@@ -1,4 +1,5 @@
 import Image from "next/image";
+import OrderForm from "./order-form";
 import { CONTACT, SITE_URL } from "./site-config";
 
 const NAV = [
@@ -6,54 +7,64 @@ const NAV = [
   { href: "#galerie", label: "Galerie" },
   { href: "#despre", label: "Despre" },
   { href: "#meniu", label: "Meniu" },
+  { href: "#comanda", label: "Comandă" },
   { href: "#contact", label: "Contact" },
 ];
 
-const MENU = [
+// Prețuri de bucată, din care se calculează boxurile.
+const PRICE = { cookie: 22, brownie: 25, marshmallow: 18 };
+
+const BOXES = [
   {
-    group: "Cookies",
-    items: [
-      { name: "Red Velvet", detail: "cu zmeură și nucă de cocos" },
-      { name: "Lumiere", detail: "lămâie cu mac" },
-      { name: "Mocha", detail: "cu alune de pădure și cafea" },
-    ],
+    name: "Box 4 cookies",
+    price: 4 * PRICE.cookie,
+    detail: "4 cookies, la alegere dintre aromele de mai jos.",
+    note: `${PRICE.cookie} lei bucata`,
   },
   {
-    group: "Marshmallows & brownies",
-    items: [
-      { name: "Marshmallows", detail: "cu nucă de cocos" },
-      { name: "Brownies", detail: "cu ciocolată și nuci" },
-      { name: "Brownies", detail: "cu zmeură" },
-    ],
+    name: "Box 6 cookies",
+    price: 6 * PRICE.cookie,
+    detail: "6 cookies, la alegere dintre aromele de mai jos.",
+    note: `${PRICE.cookie} lei bucata`,
   },
   {
-    group: "Fructe Prăjituri",
-    items: [
-      { name: "Măr Verde", detail: "" },
-      { name: "Bob de Cafea", detail: "" },
-      { name: "Mango", detail: "" },
-      { name: "Fistic", detail: "" },
-    ],
+    name: "Box 12 cookies",
+    price: 12 * PRICE.cookie,
+    detail: "12 cookies, la alegere dintre aromele de mai jos.",
+    note: `${PRICE.cookie} lei bucata`,
+  },
+  {
+    name: "Box mixt",
+    price: 2 * PRICE.cookie + 2 * PRICE.brownie + 2 * PRICE.marshmallow,
+    detail: "2 cookies, 2 brownies și 2 marshmallows, la alegere.",
+    note: "cel mai bun mod de a le încerca pe toate",
   },
 ];
 
+const FLAVOURS = [
+  {
+    group: "Cookies",
+    items: [
+      "Red Velvet",
+      "Lămâie cu mac",
+      "Alune de pădure și cafea",
+      "Ciocolată",
+    ],
+  },
+  {
+    group: "Brownies",
+    items: ["Ciocolată neagră și miez de nucă", "Ciocolată neagră și zmeură"],
+  },
+  {
+    group: "Marshmallows",
+    items: ["Nucă de cocos", "Vanilie"],
+  },
+];
+
+// Lista pentru câmpul „Ce îți dorești?” din formularul de comandă.
+const PRODUCT_OPTIONS = BOXES.map((b) => `${b.name} — ${b.price} lei`);
+
 const GALLERY = [
-  {
-    img: "/images/mar-verde.jpg",
-    caption: "„Mărul verde” — mousse cu inimă de mere",
-  },
-  {
-    img: "/images/lava-cake.jpg",
-    caption: "Lava cake cu ciocolată",
-  },
-  {
-    img: "/images/fructe-marmura.jpg",
-    caption: "Prăjituri în formă de fruct",
-  },
-  {
-    img: "/images/fructe-tava.jpg",
-    caption: "Pere, afine și mere, gata de servit",
-  },
   {
     img: "/images/cookies-bezea.jpg",
     caption: "Cookies cu bezea și cremă de citrice",
@@ -68,24 +79,6 @@ const GALLERY = [
   },
 ];
 
-const VIDEOS = [
-  {
-    src: "/videos/mar-verde.mp4",
-    poster: "/images/mar-verde.jpg",
-    caption: "„Mărul verde”, pe dinăuntru",
-  },
-  {
-    src: "/videos/lava-cake.mp4",
-    poster: "/images/lava-cake.jpg",
-    caption: "Lava cake, abia scos din formă",
-  },
-  {
-    src: "/videos/felie-zmeura.mp4",
-    poster: "/images/felie-zmeura.jpg",
-    caption: "Felie cu ciocolată și zmeură",
-  },
-];
-
 const PRODUCTS = [
   {
     img: "/images/cookies-topping.jpg",
@@ -94,23 +87,18 @@ const PRODUCTS = [
   },
   {
     img: "/images/marshmallows-brownies.jpg",
-    title: "Marshmallows & brownies",
-    text: "Brownies cu ciocolată, marshmallows caramelizate și bezele pufoase — dulciuri mărunte, pentru orice poftă.",
-  },
-  {
-    img: "/images/prajituri-fructe.jpg",
-    title: "Fructe Prăjituri",
-    text: "Prăjituri cu mousse, în formă de fruct — pară, piersică sau afină, fiecare cu miezul ei de fruct.",
+    title: "Brownies & marshmallows",
+    text: "Brownies cu ciocolată neagră, nucă sau zmeură, și marshmallows cu cocos ori vanilie.",
   },
 ];
 
-const MARQUEE_ITEMS = ["cookies", "pastry", "bezele", "marshmallows"];
+const MARQUEE_ITEMS = ["cookies", "brownies", "marshmallows", "boxuri"];
 
 const STEPS = [
   {
     nr: "01",
     title: "Alegi ce-ți dorești",
-    text: "Prăjituri, cookies sau marshmallows — ne spui ocazia și ce îți place.",
+    text: "Alegi boxul — de 4, 6, 12 cookies sau cel mixt — și aromele din el.",
   },
   {
     nr: "02",
@@ -124,17 +112,33 @@ const STEPS = [
   },
 ];
 
-const MAIL_HREF = `mailto:${CONTACT.email}?subject=${encodeURIComponent(
-  "Comandă fíori."
-)}&body=${encodeURIComponent(
-  "Ocazia: \nData: \nCe mi-aș dori: \nCantitatea: \nAlergii: \nTelefon: "
-)}`;
+const ORDER_FIELDS = "\n\nOcazia: \nData: \nCantitatea: \nAlergii: \nTelefon: ";
 
-const WHATSAPP_HREF = CONTACT.whatsapp
-  ? `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(
-      "Bună! Aș vrea să comand de la fíori."
-    )}`
-  : "";
+function mailHref(body: string) {
+  return `mailto:${CONTACT.email}?subject=${encodeURIComponent(
+    "Comandă fíori."
+  )}&body=${encodeURIComponent(body)}`;
+}
+
+function waHref(text: string) {
+  return CONTACT.whatsapp
+    ? `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(text)}`
+    : "";
+}
+
+// Deschide WhatsApp-ul cu mesajul deja scris; dacă nu e setat niciun număr
+// în site-config.ts, aceleași butoane deschid emailul.
+function orderHref(text: string) {
+  return waHref(text) || mailHref(text + ORDER_FIELDS);
+}
+
+const MAIL_HREF = mailHref(
+  "Ocazia: \nData: \nCe mi-aș dori: \nCantitatea: \nAlergii: \nTelefon: "
+);
+
+const ORDER_TEXT = "Bună! Aș vrea să comand de la fíori.";
+
+const WHATSAPP_HREF = waHref(ORDER_TEXT);
 
 const TEL_HREF = CONTACT.phone
   ? `tel:${CONTACT.phone.replace(/[^\d+]/g, "")}`
@@ -153,11 +157,15 @@ const JSON_LD = {
   name: "fíori.",
   alternateName: ["fiori", "fiori sweets"],
   description:
-    "Cofetărie artizanală: cookies, marshmallows, bezele și prăjituri, făcute în serii mici.",
+    "Cofetărie artizanală: cookies, brownies și marshmallows, în boxuri, făcute în serii mici.",
   url: SITE_URL,
   image: `${SITE_URL}/images/og.jpg`,
   email: CONTACT.email,
-  ...(CONTACT.phone ? { telephone: CONTACT.phone } : {}),
+  ...(CONTACT.whatsapp
+    ? { telephone: `+${CONTACT.whatsapp}` }
+    : CONTACT.phone
+      ? { telephone: CONTACT.phone }
+      : {}),
   ...(CONTACT.city
     ? {
         areaServed: CONTACT.city,
@@ -182,6 +190,35 @@ function Wordmark({
     <span className={`font-semibold lowercase tracking-tight ${className}`}>
       fíori<span className={dotClassName}>.</span>
     </span>
+  );
+}
+
+function WhatsAppIcon({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      className={className}
+    >
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.05 21.785h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413" />
+    </svg>
+  );
+}
+
+function FloatingOrderButton() {
+  if (!WHATSAPP_HREF) return null;
+  return (
+    <a
+      href={WHATSAPP_HREF}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="fixed bottom-5 right-5 z-50 inline-flex items-center gap-2 rounded-full bg-[#25d366] px-5 py-4 text-sm font-semibold text-[#06281a] shadow-xl transition-transform hover:scale-105"
+    >
+      <WhatsAppIcon className="h-6 w-6" />
+      <span className="hidden sm:inline">Comandă pe WhatsApp</span>
+      <span className="sr-only sm:hidden">Comandă pe WhatsApp</span>
+    </a>
   );
 }
 
@@ -242,7 +279,7 @@ export default function Home() {
             ))}
           </nav>
           <a
-            href="#contact"
+            href="#comanda"
             className="rounded-full bg-peach px-5 py-3 text-sm font-semibold text-fern-deep transition-colors hover:bg-blush"
           >
             Comandă
@@ -274,17 +311,34 @@ export default function Home() {
             <h1 className="mt-4 text-7xl text-blush sm:text-8xl md:text-9xl">
               <Wordmark />
               <span className="sr-only">
-                {` (fiori) — cofetărie artizanală${IN_CITY}: prăjituri, cookies și dulciuri`}
+                {` (fiori) — cofetărie artizanală${IN_CITY}: cookies, brownies și marshmallows`}
               </span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-base font-light leading-relaxed text-blush/90 sm:text-lg">
-              Prăjituri, cookies și dulciuri făcute cu drag{IN_CITY}, în serii
-              mici — pentru ocazii speciale sau pur și simplu pentru poftă.
+              Cookies, brownies și marshmallows făcute cu drag{IN_CITY}, în
+              serii mici — în boxuri gata de dăruit sau numai pentru pofta ta.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              {WHATSAPP_HREF && (
+                <a
+                  href={WHATSAPP_HREF}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#25d366] px-7 py-3 text-sm font-semibold text-[#06281a] transition-colors hover:bg-[#1ebe5a]"
+                >
+                  <WhatsAppIcon className="h-5 w-5" />
+                  Comandă pe WhatsApp
+                </a>
+              )}
+              <a
+                href="#comanda"
+                className="rounded-full bg-peach px-7 py-3 text-sm font-semibold text-fern-deep transition-colors hover:bg-blush"
+              >
+                Completează formularul
+              </a>
               <a
                 href="#produse"
-                className="rounded-full bg-peach px-7 py-3 text-sm font-semibold text-fern-deep transition-colors hover:bg-blush"
+                className="rounded-full border border-blush/60 px-7 py-3 text-sm font-semibold text-blush transition-colors hover:border-peach hover:text-peach"
               >
                 Vezi produsele
               </a>
@@ -301,14 +355,14 @@ export default function Home() {
               ce pregătim
             </p>
             <h2 className="mt-3 text-3xl font-semibold text-fern-deep sm:text-4xl">
-              Cookies, marshmallows, bezele, prăjituri
+              Cookies, brownies, marshmallows
             </h2>
             <p className="mt-4 max-w-2xl font-light leading-relaxed text-cocoa/80">
               Fiecare produs iese din atelier proaspăt, din ingrediente atent
               alese. Fără scurtături, fără compromisuri — doar dulciuri cum se
               fac în familie.
             </p>
-            <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-12 grid max-w-4xl gap-8 sm:grid-cols-2">
               {PRODUCTS.map((p) => (
                 <article
                   key={p.title}
@@ -319,7 +373,7 @@ export default function Home() {
                       src={p.img}
                       alt={p.title}
                       fill
-                      sizes="(min-width: 1152px) 347px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      sizes="(min-width: 896px) 436px, (min-width: 640px) 50vw, 100vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
@@ -347,9 +401,8 @@ export default function Home() {
               Galerie
             </h2>
             <p className="mt-4 max-w-2xl font-light leading-relaxed text-blush/85">
-              Câteva dintre dulciurile noastre — de la „mărul verde” cu inimă
-              de mere până la cookies-urile cu creme și prăjiturile în formă de
-              fruct.
+              Cookies-urile noastre, exact așa cum ies din atelier — cu creme,
+              fructe proaspete și topping-uri lucrate manual.
             </p>
             <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {GALLERY.map((g) => (
@@ -365,32 +418,6 @@ export default function Home() {
                   </div>
                   <figcaption className="mt-3 text-center text-sm font-light text-blush/85">
                     {g.caption}
-                  </figcaption>
-                </figure>
-              ))}
-            </div>
-
-            <h3 className="mt-16 text-xl font-semibold text-blush">
-              Din atelier, pe viu
-            </h3>
-            <p className="mt-2 max-w-2xl text-sm font-light leading-relaxed text-blush/85">
-              Filmări scurte cu dulciurile noastre, exact așa cum ies din
-              atelier — apasă play.
-            </p>
-            <div className="mt-8 grid gap-6 sm:grid-cols-3">
-              {VIDEOS.map((v) => (
-                <figure key={v.src}>
-                  <video
-                    controls
-                    playsInline
-                    preload="none"
-                    poster={v.poster}
-                    className="aspect-[9/16] w-full rounded-3xl bg-fern-deep object-cover shadow-lg"
-                  >
-                    <source src={v.src} type="video/mp4" />
-                  </video>
-                  <figcaption className="mt-3 text-center text-sm font-light text-blush/85">
-                    {v.caption}
                   </figcaption>
                 </figure>
               ))}
@@ -474,25 +501,68 @@ export default function Home() {
               meniu
             </p>
             <h2 className="mt-3 text-3xl font-semibold text-fern-deep sm:text-4xl">
-              Ce găsești la noi
+              Boxuri și prețuri
             </h2>
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {MENU.map((g) => (
+            <p className="mt-4 max-w-2xl font-light leading-relaxed text-cocoa/80">
+              Alegi boxul, apoi ne spui ce arome vrei în el — le găsești pe
+              toate mai jos.
+            </p>
+            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+              {BOXES.map((box) => (
+                <div
+                  key={box.name}
+                  className="flex flex-col rounded-3xl bg-cream/80 p-6"
+                >
+                  <div className="flex items-baseline justify-between gap-4">
+                    <h3 className="text-lg font-semibold text-fern-deep">
+                      {box.name}
+                    </h3>
+                    <p className="shrink-0 text-2xl font-semibold text-fern">
+                      {box.price} lei
+                    </p>
+                  </div>
+                  <p className="mt-3 flex-1 text-sm font-light leading-relaxed text-cocoa/75">
+                    {box.detail}
+                  </p>
+                  <div className="mt-5 flex items-center justify-between gap-4">
+                    <span className="text-xs font-light uppercase tracking-wide text-cocoa/60">
+                      {box.note}
+                    </span>
+                    <a
+                      href={orderHref(
+                        `Bună! Aș vrea să comand un ${box.name} (${box.price} lei).`
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Comandă ${box.name}`}
+                      className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-fern px-4 py-2.5 text-xs font-semibold text-blush transition-colors hover:bg-fern-deep"
+                    >
+                      {WHATSAPP_HREF && (
+                        <WhatsAppIcon className="h-3.5 w-3.5" />
+                      )}
+                      Comandă
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <h3 className="mt-14 text-xl font-semibold text-fern-deep">
+              Arome, la alegere
+            </h3>
+            <div className="mt-6 grid gap-6 sm:grid-cols-3">
+              {FLAVOURS.map((g) => (
                 <div key={g.group} className="rounded-3xl bg-cream/80 p-6">
-                  <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-fern">
+                  <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-fern">
                     {g.group}
-                  </h3>
-                  <ul className="mt-4 space-y-4">
+                  </h4>
+                  <ul className="mt-4 space-y-2">
                     {g.items.map((item) => (
-                      <li key={`${item.name} ${item.detail}`}>
-                        <p className="text-sm font-semibold text-fern-deep">
-                          {item.name}
-                        </p>
-                        {item.detail && (
-                          <p className="mt-1 text-xs font-light leading-relaxed text-cocoa/70">
-                            {item.detail}
-                          </p>
-                        )}
+                      <li
+                        key={item}
+                        className="text-sm font-light leading-relaxed text-cocoa/80"
+                      >
+                        {item}
                       </li>
                     ))}
                   </ul>
@@ -501,14 +571,45 @@ export default function Home() {
             </div>
             <p className="mt-8 font-light leading-relaxed text-cocoa/80">
               Pentru produse personalizate,{" "}
+              {WHATSAPP_HREF && (
+                <>
+                  <a
+                    href={WHATSAPP_HREF}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-fern underline underline-offset-4 transition-colors hover:text-fern-deep"
+                  >
+                    scrie-ne pe WhatsApp
+                  </a>{" "}
+                  sau{" "}
+                </>
+              )}
               <a
                 href={MAIL_HREF}
                 className="font-medium text-fern underline underline-offset-4 transition-colors hover:text-fern-deep"
               >
-                scrie-ne pe email
+                pe email
               </a>
               .
             </p>
+          </div>
+        </section>
+
+        {/* Formular de comandă */}
+        <section id="comanda" className="bg-cream py-20">
+          <div className="mx-auto w-full max-w-3xl px-6">
+            <p className="text-xs font-medium uppercase tracking-[0.4em] text-fern">
+              comandă
+            </p>
+            <h2 className="mt-3 text-3xl font-semibold text-fern-deep sm:text-4xl">
+              Completează și trimite comanda
+            </h2>
+            <p className="mt-4 font-light leading-relaxed text-cocoa/80">
+              Alege boxul și spune-ne ce arome vrei în el și pentru când —
+              primim comanda pe loc și revenim cu confirmarea. Dacă preferi să
+              vorbim direct, butonul verde de WhatsApp e mereu la îndemână.
+            </p>
+            <OrderForm products={PRODUCT_OPTIONS} />
           </div>
         </section>
 
@@ -523,9 +624,9 @@ export default function Home() {
                 Hai să vorbim despre ceva dulce
               </h2>
               <p className="mx-auto mt-4 max-w-xl font-light leading-relaxed text-blush/90">
-                Scrie-ne ce sărbătorești și când — revenim cu propuneri și
-                toate detaliile. Comenzile se preiau în limita locurilor
-                disponibile.
+                Cel mai simplu e pe WhatsApp: ne scrii ce îți dorești și când,
+                iar noi revenim cu propuneri și toate detaliile. Comenzile se
+                preiau în limita locurilor disponibile.
               </p>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 {WHATSAPP_HREF && (
@@ -533,9 +634,10 @@ export default function Home() {
                     href={WHATSAPP_HREF}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-full bg-peach px-8 py-4 text-base font-semibold text-fern-deep transition-colors hover:bg-blush"
+                    className="inline-flex items-center gap-2 rounded-full bg-[#25d366] px-8 py-4 text-base font-semibold text-[#06281a] transition-colors hover:bg-[#1ebe5a]"
                   >
-                    Scrie-ne pe WhatsApp
+                    <WhatsAppIcon className="h-5 w-5" />
+                    Comandă pe WhatsApp
                   </a>
                 )}
                 <a
@@ -562,6 +664,14 @@ export default function Home() {
                 <span className="select-all font-medium text-blush">
                   {CONTACT.email}
                 </span>
+                {CONTACT.phone && (
+                  <>
+                    {" · "}
+                    <span className="select-all font-medium text-blush">
+                      {CONTACT.phone}
+                    </span>
+                  </>
+                )}
               </p>
               {CONTACT.city && (
                 <p className="mt-2 text-sm font-light text-blush/90">
@@ -573,8 +683,10 @@ export default function Home() {
         </section>
       </main>
 
+      <FloatingOrderButton />
+
       {/* Footer */}
-      <footer className="bg-fern-deep py-8">
+      <footer className="bg-fern-deep pb-24 pt-8 sm:pb-8">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-blush/70 sm:flex-row">
           <span className="text-xl text-blush">
             <Wordmark />
