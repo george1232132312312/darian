@@ -21,4 +21,4 @@ export const CONTACT = {
 //
 // Cât timp e goală, formularul rămâne vizibil și funcțional, dar în loc să
 // trimită emailul trimite comanda completată pe WhatsApp.
-export const FORM_ACCESS_KEY = "";
+export const FORM_ACCESS_KEY = "749d5121-5766-4e4a-9cdc-77da063fcd84";
