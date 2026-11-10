@@ -20,25 +20,53 @@ const BOXES = [
     price: 4 * PRICE.cookie,
     detail: "4 cookies, la alegere dintre aromele de mai jos.",
     note: `${PRICE.cookie} lei bucata`,
+    kinds: ["Cookies"],
   },
   {
     name: "Box 6 cookies",
     price: 6 * PRICE.cookie,
     detail: "6 cookies, la alegere dintre aromele de mai jos.",
     note: `${PRICE.cookie} lei bucata`,
+    kinds: ["Cookies"],
   },
   {
     name: "Box 12 cookies",
     price: 12 * PRICE.cookie,
     detail: "12 cookies, la alegere dintre aromele de mai jos.",
     note: `${PRICE.cookie} lei bucata`,
+    kinds: ["Cookies"],
+  },
+  {
+    name: "Box 4 brownies",
+    price: 4 * PRICE.brownie,
+    detail: "4 brownies, la alegere dintre aromele de mai jos.",
+    note: `${PRICE.brownie} lei bucata`,
+    kinds: ["Brownies"],
+  },
+  {
+    name: "Box 6 brownies",
+    price: 6 * PRICE.brownie,
+    detail: "6 brownies, la alegere dintre aromele de mai jos.",
+    note: `${PRICE.brownie} lei bucata`,
+    kinds: ["Brownies"],
   },
   {
     name: "Box mixt",
-    price: 2 * PRICE.cookie + 2 * PRICE.brownie + 2 * PRICE.marshmallow,
-    detail: "2 cookies, 2 brownies și 2 marshmallows, la alegere.",
+    price: 4 * PRICE.cookie + 4 * PRICE.brownie + 4 * PRICE.marshmallow,
+    detail: "4 cookies, 4 brownies și 4 marshmallows, la alegere.",
     note: "cel mai bun mod de a le încerca pe toate",
+    kinds: ["Cookies", "Brownies", "Marshmallows"],
   },
+];
+
+const ALLERGENS = [
+  "Cereale cu gluten (grâu)",
+  "Ouă",
+  "Lapte și lactate",
+  "Arahide",
+  "Fructe cu coajă lemnoasă (nuci, alune, migdale, fistic)",
+  "Soia",
+  "Susan",
 ];
 
 const FLAVOURS = [
@@ -61,34 +89,53 @@ const FLAVOURS = [
   },
 ];
 
-// Lista pentru câmpul „Ce îți dorești?” din formularul de comandă.
+// Lista pentru câmpul „Ce box îți dorești?” din formularul de comandă.
 const PRODUCT_OPTIONS = BOXES.map((b) => `${b.name} — ${b.price} lei`);
+
+function flavourList(group: string) {
+  return FLAVOURS.find((f) => f.group === group)?.items.join(" / ") ?? "";
+}
+
+// Mesajul care apare deja scris în WhatsApp, cu aromele de completat.
+function boxMessage(box: (typeof BOXES)[number]) {
+  const lines = [
+    `Bună! Aș vrea să comand un ${box.name} (${box.price} lei).`,
+    "",
+    ...box.kinds.map((kind) => `${kind} (${flavourList(kind)}): `),
+  ];
+  return lines.join("\n");
+}
 
 const GALLERY = [
   {
-    img: "/images/cookies-bezea.jpg",
-    caption: "Cookies cu bezea și cremă de citrice",
+    img: "/images/cookies-topping.jpg",
+    caption: "Cookies cu creme și topping-uri",
   },
   {
-    img: "/images/cookies-creme.jpg",
-    caption: "Cookies cu creme, fructe și caramel",
+    img: "/images/cookies-mocha-trei.webp",
+    caption: "Cookies Mocha, gata de ambalat",
   },
   {
-    img: "/images/cookies-tava.jpg",
-    caption: "Rânduri de cookies, gata de livrat",
+    img: "/images/marshmallows-brownies.jpg",
+    caption: "Cookies Red Velvet, din atelier",
   },
 ];
 
 const PRODUCTS = [
   {
-    img: "/images/cookies-topping.jpg",
+    img: "/images/cookies-mocha.jpg",
     title: "Cookies",
     text: "Cookies mari, cu creme și topping-uri diferite — crocante la margine, moi la mijloc.",
   },
   {
-    img: "/images/marshmallows-brownies.jpg",
-    title: "Brownies & marshmallows",
-    text: "Brownies cu ciocolată neagră, nucă sau zmeură, și marshmallows cu cocos ori vanilie.",
+    img: "/images/brownie-nuca.webp",
+    title: "Brownies",
+    text: "Brownies din ciocolată neagră, în două sortimente: cu miez de nucă sau cu zmeură.",
+  },
+  {
+    img: "/images/marshmallows.jpg",
+    title: "Marshmallows",
+    text: "Marshmallows pufoase, făcute în casă, cu nucă de cocos sau cu vanilie.",
   },
 ];
 
@@ -103,7 +150,7 @@ const STEPS = [
   {
     nr: "02",
     title: "Stabilim detaliile",
-    text: "Alegem împreună aromele și cantitatea, apoi confirmăm data.",
+    text: "Alegem împreună aromele și numărul de boxuri, apoi confirmăm data.",
   },
   {
     nr: "03",
@@ -112,7 +159,7 @@ const STEPS = [
   },
 ];
 
-const ORDER_FIELDS = "\n\nOcazia: \nData: \nCantitatea: \nAlergii: \nTelefon: ";
+const ORDER_FIELDS = "\nNumăr de boxuri: \nData dorită: \nTelefon: ";
 
 function mailHref(body: string) {
   return `mailto:${CONTACT.email}?subject=${encodeURIComponent(
@@ -133,10 +180,19 @@ function orderHref(text: string) {
 }
 
 const MAIL_HREF = mailHref(
-  "Ocazia: \nData: \nCe mi-aș dori: \nCantitatea: \nAlergii: \nTelefon: "
+  `Box dorit (${BOXES.map((b) => `${b.name} ${b.price} lei`).join(
+    " / "
+  )}): \nNumăr de boxuri: \nArome (${flavourList(
+    "Cookies"
+  )}): \nData dorită: \nTelefon: `
 );
 
-const ORDER_TEXT = "Bună! Aș vrea să comand de la fíori.";
+const ORDER_TEXT = [
+  "Bună! Aș vrea să comand de la fíori.",
+  "",
+  `Box dorit (${BOXES.map((b) => `${b.name} ${b.price} lei`).join(" / ")}): `,
+  `Arome cookies (${flavourList("Cookies")}): `,
+].join("\n");
 
 const WHATSAPP_HREF = waHref(ORDER_TEXT);
 
@@ -181,7 +237,7 @@ const JSON_LD = {
 
 function Wordmark({
   className = "",
-  dotClassName = "text-peach",
+  dotClassName = "text-gold",
 }: {
   className?: string;
   dotClassName?: string;
@@ -225,7 +281,7 @@ function FloatingOrderButton() {
 function Marquee() {
   const row = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
   return (
-    <div className="overflow-hidden bg-fern-deep py-4" aria-hidden="true">
+    <div className="overflow-hidden bg-navy-deep py-4" aria-hidden="true">
       <div className="marquee-track flex w-max gap-8">
         {[0, 1].map((half) => (
           <div key={half} className="flex shrink-0 items-center gap-8">
@@ -235,7 +291,7 @@ function Marquee() {
                 className="flex items-center gap-8 text-sm font-medium uppercase tracking-[0.3em] text-blush/80"
               >
                 {item}
-                <span className="h-1.5 w-1.5 rounded-full bg-peach/70" />
+                <span className="h-1.5 w-1.5 rounded-full bg-gold/70" />
               </span>
             ))}
           </div>
@@ -256,7 +312,7 @@ export default function Home() {
       />
 
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-fern/95 backdrop-blur">
+      <header className="sticky top-0 z-50 bg-navy/95 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-6">
           <a
             href="#"
@@ -272,7 +328,7 @@ export default function Home() {
               <a
                 key={item.href}
                 href={item.href}
-                className="transition-colors hover:text-peach"
+                className="uppercase tracking-[0.12em] transition-colors hover:text-gold"
               >
                 {item.label}
               </a>
@@ -280,7 +336,7 @@ export default function Home() {
           </nav>
           <a
             href="#comanda"
-            className="rounded-full bg-peach px-5 py-3 text-sm font-semibold text-fern-deep transition-colors hover:bg-blush"
+            className="rounded-full bg-gold px-5 py-3 text-sm font-semibold text-navy-deep transition-colors hover:bg-blush"
           >
             Comandă
           </a>
@@ -293,7 +349,7 @@ export default function Home() {
             <a
               key={item.href}
               href={item.href}
-              className="shrink-0 rounded-full border border-blush/40 px-4 py-2.5 text-sm text-blush/90"
+              className="shrink-0 rounded-full border border-blush/40 px-4 py-2.5 text-xs uppercase tracking-[0.12em] text-blush/90"
             >
               {item.label}
             </a>
@@ -303,22 +359,22 @@ export default function Home() {
 
       <main className="flex-1">
         {/* Hero */}
-        <section className="bg-fern">
-          <div className="mx-auto w-full max-w-6xl px-6 pb-20 pt-16 text-center sm:pb-28 sm:pt-24">
-            <p className="text-xs font-medium uppercase tracking-[0.4em] text-peach/90 sm:text-sm">
+        <section className="bg-navy">
+          <div className="mx-auto w-full max-w-6xl px-6 pb-12 pt-10 text-center sm:pb-16 sm:pt-14">
+            <p className="text-xs font-medium uppercase tracking-[0.4em] text-gold/90 sm:text-sm">
               cofetărie artizanală
             </p>
-            <h1 className="mt-4 text-7xl text-blush sm:text-8xl md:text-9xl">
+            <h1 className="mt-3 text-6xl text-blush sm:text-7xl">
               <Wordmark />
               <span className="sr-only">
                 {` (fiori) — cofetărie artizanală${IN_CITY}: cookies, brownies și marshmallows`}
               </span>
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-base font-light leading-relaxed text-blush/90 sm:text-lg">
+            <p className="mx-auto mt-4 max-w-2xl text-base font-light leading-relaxed text-blush/90">
               Cookies, brownies și marshmallows făcute cu drag{IN_CITY}, în
               serii mici — în boxuri gata de dăruit sau numai pentru pofta ta.
             </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
               {WHATSAPP_HREF && (
                 <a
                   href={WHATSAPP_HREF}
@@ -332,13 +388,13 @@ export default function Home() {
               )}
               <a
                 href="#comanda"
-                className="rounded-full bg-peach px-7 py-3 text-sm font-semibold text-fern-deep transition-colors hover:bg-blush"
+                className="rounded-full bg-gold px-7 py-3 text-sm font-semibold text-navy-deep transition-colors hover:bg-blush"
               >
                 Completează formularul
               </a>
               <a
                 href="#produse"
-                className="rounded-full border border-blush/60 px-7 py-3 text-sm font-semibold text-blush transition-colors hover:border-peach hover:text-peach"
+                className="rounded-full border border-blush/60 px-7 py-3 text-sm font-semibold text-blush transition-colors hover:border-gold hover:text-gold"
               >
                 Vezi produsele
               </a>
@@ -351,18 +407,18 @@ export default function Home() {
         {/* Produse */}
         <section id="produse" className="bg-cream py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
-            <p className="text-xs font-medium uppercase tracking-[0.4em] text-fern">
+            <p className="text-xs font-medium uppercase tracking-[0.4em] text-navy">
               ce pregătim
             </p>
-            <h2 className="mt-3 text-3xl font-semibold text-fern-deep sm:text-4xl">
+            <h2 className="mt-3 text-3xl font-semibold text-navy-deep sm:text-4xl">
               Cookies, brownies, marshmallows
             </h2>
-            <p className="mt-4 max-w-2xl font-light leading-relaxed text-cocoa/80">
+            <p className="mt-4 max-w-2xl font-light leading-relaxed text-ink/80">
               Fiecare produs iese din atelier proaspăt, din ingrediente atent
               alese. Fără scurtături, fără compromisuri — doar dulciuri cum se
               fac în familie.
             </p>
-            <div className="mt-12 grid max-w-4xl gap-8 sm:grid-cols-2">
+            <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {PRODUCTS.map((p) => (
                 <article
                   key={p.title}
@@ -373,15 +429,15 @@ export default function Home() {
                       src={p.img}
                       alt={p.title}
                       fill
-                      sizes="(min-width: 896px) 436px, (min-width: 640px) 50vw, 100vw"
+                      sizes="(min-width: 1152px) 347px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-lg font-semibold text-fern-deep">
+                    <h3 className="text-lg font-semibold text-navy-deep">
                       {p.title}
                     </h3>
-                    <p className="mt-2 text-sm font-light leading-relaxed text-cocoa/75">
+                    <p className="mt-2 text-sm font-light leading-relaxed text-ink/75">
                       {p.text}
                     </p>
                   </div>
@@ -392,9 +448,9 @@ export default function Home() {
         </section>
 
         {/* Galerie */}
-        <section id="galerie" className="bg-fern py-20">
+        <section id="galerie" className="bg-navy py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
-            <p className="text-xs font-medium uppercase tracking-[0.4em] text-peach">
+            <p className="text-xs font-medium uppercase tracking-[0.4em] text-gold">
               din atelier
             </p>
             <h2 className="mt-3 text-3xl font-semibold text-blush sm:text-4xl">
@@ -402,7 +458,7 @@ export default function Home() {
             </h2>
             <p className="mt-4 max-w-2xl font-light leading-relaxed text-blush/85">
               Cookies-urile noastre, exact așa cum ies din atelier — cu creme,
-              fructe proaspete și topping-uri lucrate manual.
+              fructe și topping-uri lucrate manual.
             </p>
             <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {GALLERY.map((g) => (
@@ -426,7 +482,7 @@ export default function Home() {
         </section>
 
         {/* Despre */}
-        <section id="despre" className="bg-blush py-20">
+        <section id="despre" className="bg-nude py-20">
           <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-6 lg:grid-cols-2">
             <div className="relative aspect-square overflow-hidden rounded-3xl shadow-lg">
               <Image
@@ -438,32 +494,32 @@ export default function Home() {
               />
             </div>
             <div>
-              <p className="text-xs font-medium uppercase tracking-[0.4em] text-fern">
+              <p className="text-xs font-medium uppercase tracking-[0.4em] text-navy">
                 despre noi
               </p>
-              <h2 className="mt-3 text-3xl font-semibold text-fern-deep sm:text-4xl">
+              <h2 className="mt-3 text-3xl font-semibold text-navy-deep sm:text-4xl">
                 Un atelier mic, cu suflet mare
               </h2>
-              <p className="mt-6 font-light leading-relaxed text-cocoa/80">
-                <Wordmark className="text-fern-deep" dotClassName="text-fern" />{" "}
+              <p className="mt-6 font-light leading-relaxed text-ink/80">
+                <Wordmark className="text-navy-deep" dotClassName="text-navy" />{" "}
                 a pornit din bucătăria de acasă, din pasiunea unui tânăr cofetar
                 pentru lucrurile făcute bine: aluaturi frământate cu răbdare,
                 ciocolată adevărată și rețete testate până ies perfect.
               </p>
-              <p className="mt-4 font-light leading-relaxed text-cocoa/80">
+              <p className="mt-4 font-light leading-relaxed text-ink/80">
                 Lucrăm în serii mici, la comandă, ca dulciurile să plece din
                 atelier proaspete și exact așa cum au fost gândite.
               </p>
               <div className="mt-8 grid gap-4 sm:grid-cols-3">
                 {STEPS.map((s) => (
                   <div key={s.nr} className="rounded-2xl bg-cream/80 p-5">
-                    <span className="text-sm font-semibold text-fern">
+                    <span className="text-sm font-semibold text-navy">
                       {s.nr}
                     </span>
-                    <h3 className="mt-2 text-sm font-semibold text-fern-deep">
+                    <h3 className="mt-2 text-sm font-semibold text-navy-deep">
                       {s.title}
                     </h3>
-                    <p className="mt-2 text-xs font-light leading-relaxed text-cocoa/70">
+                    <p className="mt-2 text-xs font-light leading-relaxed text-ink/70">
                       {s.text}
                     </p>
                   </div>
@@ -473,69 +529,46 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Alergeni */}
-        <section id="alergeni" className="bg-cream py-12">
-          <div className="mx-auto w-full max-w-3xl px-6">
-            <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-fern">
-              Alergeni
-            </h2>
-            <p className="mt-3 text-sm font-light leading-relaxed text-cocoa/80">
-              Produsele noastre conțin sau pot conține:{" "}
-              <strong className="font-semibold">cereale cu gluten</strong>,{" "}
-              <strong className="font-semibold">ouă</strong>,{" "}
-              <strong className="font-semibold">lapte</strong>,{" "}
-              <strong className="font-semibold">fructe cu coajă lemnoasă</strong>{" "}
-              și <strong className="font-semibold">soia</strong>. Sunt
-              preparate într-un atelier în care se lucrează cu acești alergeni,
-              deci pot apărea urme și în produsele care nu îi conțin ca
-              ingredient. Spune-ne la comandă dacă ai o alergie — îți confirmăm
-              în scris ce conține produsul tău.
-            </p>
-          </div>
-        </section>
-
         {/* Meniu */}
-        <section id="meniu" className="bg-blush py-20">
+        <section id="meniu" className="bg-nude py-20">
           <div className="mx-auto w-full max-w-5xl px-6">
-            <p className="text-xs font-medium uppercase tracking-[0.4em] text-fern">
+            <p className="text-xs font-medium uppercase tracking-[0.4em] text-navy">
               meniu
             </p>
-            <h2 className="mt-3 text-3xl font-semibold text-fern-deep sm:text-4xl">
+            <h2 className="mt-3 text-3xl font-semibold text-navy-deep sm:text-4xl">
               Boxuri și prețuri
             </h2>
-            <p className="mt-4 max-w-2xl font-light leading-relaxed text-cocoa/80">
+            <p className="mt-4 max-w-2xl font-light leading-relaxed text-ink/80">
               Alegi boxul, apoi ne spui ce arome vrei în el — le găsești pe
               toate mai jos.
             </p>
-            <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {BOXES.map((box) => (
                 <div
                   key={box.name}
                   className="flex flex-col rounded-3xl bg-cream/80 p-6"
                 >
                   <div className="flex items-baseline justify-between gap-4">
-                    <h3 className="text-lg font-semibold text-fern-deep">
+                    <h3 className="text-lg font-semibold text-navy-deep">
                       {box.name}
                     </h3>
-                    <p className="shrink-0 text-2xl font-semibold text-fern">
+                    <p className="shrink-0 text-2xl font-semibold text-navy">
                       {box.price} lei
                     </p>
                   </div>
-                  <p className="mt-3 flex-1 text-sm font-light leading-relaxed text-cocoa/75">
+                  <p className="mt-3 flex-1 text-sm font-light leading-relaxed text-ink/75">
                     {box.detail}
                   </p>
                   <div className="mt-5 flex items-center justify-between gap-4">
-                    <span className="text-xs font-light uppercase tracking-wide text-cocoa/60">
+                    <span className="text-xs font-light uppercase tracking-wide text-ink/60">
                       {box.note}
                     </span>
                     <a
-                      href={orderHref(
-                        `Bună! Aș vrea să comand un ${box.name} (${box.price} lei).`
-                      )}
+                      href={orderHref(boxMessage(box))}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Comandă ${box.name}`}
-                      className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-fern px-4 py-2.5 text-xs font-semibold text-blush transition-colors hover:bg-fern-deep"
+                      className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-navy px-4 py-2.5 text-xs font-semibold text-blush transition-colors hover:bg-navy-deep"
                     >
                       {WHATSAPP_HREF && (
                         <WhatsAppIcon className="h-3.5 w-3.5" />
@@ -547,20 +580,20 @@ export default function Home() {
               ))}
             </div>
 
-            <h3 className="mt-14 text-xl font-semibold text-fern-deep">
+            <h3 className="mt-14 text-xl font-semibold text-navy-deep">
               Arome, la alegere
             </h3>
             <div className="mt-6 grid gap-6 sm:grid-cols-3">
               {FLAVOURS.map((g) => (
                 <div key={g.group} className="rounded-3xl bg-cream/80 p-6">
-                  <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-fern">
+                  <h4 className="text-sm font-semibold uppercase tracking-[0.2em] text-navy">
                     {g.group}
                   </h4>
                   <ul className="mt-4 space-y-2">
                     {g.items.map((item) => (
                       <li
                         key={item}
-                        className="text-sm font-light leading-relaxed text-cocoa/80"
+                        className="text-sm font-light leading-relaxed text-ink/80"
                       >
                         {item}
                       </li>
@@ -569,7 +602,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <p className="mt-8 font-light leading-relaxed text-cocoa/80">
+            <p className="mt-8 font-light leading-relaxed text-ink/80">
               Pentru produse personalizate,{" "}
               {WHATSAPP_HREF && (
                 <>
@@ -577,7 +610,7 @@ export default function Home() {
                     href={WHATSAPP_HREF}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-medium text-fern underline underline-offset-4 transition-colors hover:text-fern-deep"
+                    className="font-medium text-navy underline underline-offset-4 transition-colors hover:text-navy-deep"
                   >
                     scrie-ne pe WhatsApp
                   </a>{" "}
@@ -586,7 +619,7 @@ export default function Home() {
               )}
               <a
                 href={MAIL_HREF}
-                className="font-medium text-fern underline underline-offset-4 transition-colors hover:text-fern-deep"
+                className="font-medium text-navy underline underline-offset-4 transition-colors hover:text-navy-deep"
               >
                 pe email
               </a>
@@ -598,26 +631,55 @@ export default function Home() {
         {/* Formular de comandă */}
         <section id="comanda" className="bg-cream py-20">
           <div className="mx-auto w-full max-w-3xl px-6">
-            <p className="text-xs font-medium uppercase tracking-[0.4em] text-fern">
+            <p className="text-xs font-medium uppercase tracking-[0.4em] text-navy">
               comandă
             </p>
-            <h2 className="mt-3 text-3xl font-semibold text-fern-deep sm:text-4xl">
+            <h2 className="mt-3 text-3xl font-semibold text-navy-deep sm:text-4xl">
               Completează și trimite comanda
             </h2>
-            <p className="mt-4 font-light leading-relaxed text-cocoa/80">
+            <p className="mt-4 font-light leading-relaxed text-ink/80">
               Alege boxul și spune-ne ce arome vrei în el și pentru când —
               primim comanda pe loc și revenim cu confirmarea. Dacă preferi să
               vorbim direct, butonul verde de WhatsApp e mereu la îndemână.
             </p>
-            <OrderForm products={PRODUCT_OPTIONS} />
+            <OrderForm products={PRODUCT_OPTIONS} flavours={FLAVOURS} />
+
+            <div
+              id="alergeni"
+              className="mt-8 rounded-3xl border border-navy/20 bg-nude/70 p-6 sm:p-8"
+            >
+              <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-navy">
+                Alergeni
+              </h3>
+              <p className="mt-3 text-sm font-light leading-relaxed text-ink/80">
+                Produsele noastre conțin sau pot conține:
+              </p>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {ALLERGENS.map((a) => (
+                  <li
+                    key={a}
+                    className="rounded-full bg-cream px-4 py-2 text-xs font-medium text-navy-deep"
+                  >
+                    {a}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-4 text-sm font-light leading-relaxed text-ink/80">
+                Toate sunt preparate în același atelier, deci pot apărea urme
+                și în produsele care nu conțin acești alergeni ca ingredient.
+                Dacă ai o alergie, scrie-ne în câmpul de detalii al
+                formularului — îți confirmăm în scris ce conține comanda ta
+                înainte de a o pregăti.
+              </p>
+            </div>
           </div>
         </section>
 
         {/* Contact */}
-        <section id="contact" className="pattern-dashes bg-fern">
-          <div className="bg-fern/90 py-20">
+        <section id="contact" className="pattern-dashes bg-navy">
+          <div className="bg-navy/90 py-20">
             <div className="mx-auto w-full max-w-3xl px-6 text-center">
-              <p className="text-xs font-medium uppercase tracking-[0.4em] text-peach">
+              <p className="text-xs font-medium uppercase tracking-[0.4em] text-gold">
                 contact
               </p>
               <h2 className="mt-3 text-3xl font-semibold text-blush sm:text-4xl">
@@ -644,8 +706,8 @@ export default function Home() {
                   href={MAIL_HREF}
                   className={
                     WHATSAPP_HREF
-                      ? "rounded-full border border-blush/60 px-8 py-4 text-base font-semibold text-blush transition-colors hover:border-peach hover:text-peach"
-                      : "rounded-full bg-peach px-8 py-4 text-base font-semibold text-fern-deep transition-colors hover:bg-blush"
+                      ? "rounded-full border border-blush/60 px-8 py-4 text-base font-semibold text-blush transition-colors hover:border-gold hover:text-gold"
+                      : "rounded-full bg-gold px-8 py-4 text-base font-semibold text-navy-deep transition-colors hover:bg-blush"
                   }
                 >
                   Trimite-ne un email
@@ -653,7 +715,7 @@ export default function Home() {
                 {TEL_HREF && (
                   <a
                     href={TEL_HREF}
-                    className="rounded-full border border-blush/60 px-8 py-4 text-base font-semibold text-blush transition-colors hover:border-peach hover:text-peach"
+                    className="rounded-full border border-blush/60 px-8 py-4 text-base font-semibold text-blush transition-colors hover:border-gold hover:text-gold"
                   >
                     Sună: {CONTACT.phone}
                   </a>
@@ -686,7 +748,7 @@ export default function Home() {
       <FloatingOrderButton />
 
       {/* Footer */}
-      <footer className="bg-fern-deep pb-24 pt-8 sm:pb-8">
+      <footer className="bg-navy-deep pb-24 pt-8 sm:pb-8">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-4 px-6 text-sm text-blush/70 sm:flex-row">
           <span className="text-xl text-blush">
             <Wordmark />
@@ -699,7 +761,7 @@ export default function Home() {
                   href={s.href}
                   target="_blank"
                   rel="me noopener noreferrer"
-                  className="font-medium text-blush transition-colors hover:text-peach"
+                  className="font-medium text-blush transition-colors hover:text-gold"
                 >
                   {s.label}
                 </a>

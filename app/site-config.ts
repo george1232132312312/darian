@@ -14,11 +14,9 @@ export const CONTACT = {
   city: "",
 };
 
-// Cheia care face ca formularul de comandă să trimită emailuri.
-// Se obține gratuit, în 2 minute, de pe https://web3forms.com — introduci
-// adresa fiorisweets1@gmail.com, iar cheia („Access Key”) vine pe email.
-// Se lipește aici, între ghilimele.
+// Cheia care face ca formularul de comandă să trimită emailuri, obținută de
+// pe https://web3forms.com. Comenzile ajung pe adresa cu care a fost creată.
 //
-// Cât timp e goală, formularul rămâne vizibil și funcțional, dar în loc să
-// trimită emailul trimite comanda completată pe WhatsApp.
+// Dacă se golește, formularul rămâne funcțional, dar trimite comanda pe
+// WhatsApp în loc de email.
 export const FORM_ACCESS_KEY = "749d5121-5766-4e4a-9cdc-77da063fcd84";

@@ -2,9 +2,9 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-fern px-6 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-navy px-6 text-center">
       <span className="text-6xl font-semibold lowercase tracking-tight text-blush">
-        fíori<span className="text-peach">.</span>
+        fíori<span className="text-gold">.</span>
       </span>
       <h1 className="mt-8 text-2xl font-semibold text-blush">
         Pagina asta nu există
@@ -15,7 +15,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/"
-        className="mt-8 rounded-full bg-peach px-7 py-3 text-sm font-semibold text-fern-deep transition-colors hover:bg-blush"
+        className="mt-8 rounded-full bg-gold px-7 py-3 text-sm font-semibold text-navy-deep transition-colors hover:bg-blush"
       >
         Înapoi la pagina principală
       </Link>

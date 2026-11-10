@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#33523f",
+  themeColor: "#20344d",
 };
 
 export default function RootLayout({
@@ -49,7 +49,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ro" className={poppins.variable}>
-      <body className="font-sans bg-cream text-cocoa antialiased">
+      <body className="font-sans bg-cream text-ink antialiased">
         {children}
       </body>
     </html>

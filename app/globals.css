@@ -1,12 +1,15 @@
 @import "tailwindcss";
 
+/* Paleta de brand fíori.: bleumarin profund, roz pudră, accent crem-auriu. */
 @theme {
-  --color-fern: #33523f;
-  --color-fern-deep: #243b2c;
-  --color-peach: #f3c9ab;
-  --color-blush: #f9ddc8;
-  --color-cream: #fbf5ee;
-  --color-cocoa: #33221a;
+  --color-navy: #20344d;
+  --color-navy-deep: #16263a;
+  --color-gold: #ecd4a8;
+  --color-blush: #e8c5c3;
+  --color-rose: #cf9f9b;
+  --color-nude: #e9e0db;
+  --color-cream: #f3ecdc;
+  --color-ink: #22303f;
 }
 
 @theme inline {
@@ -36,7 +39,7 @@
 }
 
 .pattern-dashes {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cg fill='%23f3c9ab' fill-opacity='0.85'%3E%3Crect x='6' y='1' width='4' height='14' rx='2' transform='rotate(45 8 8)'/%3E%3Crect x='22' y='17' width='4' height='14' rx='2' transform='rotate(45 24 24)'/%3E%3C/g%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cg fill='%23cf9f9b' fill-opacity='0.85'%3E%3Crect x='6' y='1' width='4' height='14' rx='2' transform='rotate(45 8 8)'/%3E%3Crect x='22' y='17' width='4' height='14' rx='2' transform='rotate(45 24 24)'/%3E%3C/g%3E%3C/svg%3E");
   background-size: 32px 32px;
 }
 
